@@ -1,115 +1,93 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | FinanceTracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { slate: { 850: '#151f32', 950: '#0b1120' } }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-slate-950 text-slate-50 font-sans flex h-screen overflow-hidden">
+<body class="bg-slate-50 text-slate-900 font-sans flex h-screen overflow-hidden">
 
-    <aside class="w-64 bg-slate-900 border-r border-slate-800 flex-col hidden md:flex">
+    <aside class="w-64 bg-white border-r border-slate-200 flex-col hidden md:flex shadow-sm z-10">
         <div class="p-6">
-            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500 tracking-tight">
-                FinanceTracker
-            </h1>
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight">FinanceTracker</h1>
         </div>
         <nav class="flex-1 px-4 space-y-2 mt-4">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl font-medium transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                Dashboard
-            </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 rounded-xl font-medium transition-all">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                Analytics
+            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl font-medium transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg> Dashboard
             </a>
         </nav>
-        <div class="p-6 border-t border-slate-800">
+        <div class="p-6 border-t border-slate-200">
             <div class="flex items-center gap-3 mb-6">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold shadow-lg">
-                    {{ current_user.name[0]|upper }}
-                </div>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-md">{{ current_user.name[0]|upper }}</div>
                 <div>
-                    <p class="text-sm font-medium text-slate-200">{{ current_user.name }}</p>
-                    <p class="text-xs text-slate-500">Free Plan</p>
+                    <p class="text-sm font-bold text-slate-800">{{ current_user.name }}</p>
+                    <p class="text-xs text-slate-500">Premium User</p>
                 </div>
             </div>
-            <a href="/logout" class="flex items-center justify-center gap-2 w-full bg-slate-800 hover:bg-red-500/10 hover:text-red-400 text-slate-300 py-2.5 rounded-lg text-sm font-medium transition-all border border-slate-700 hover:border-red-500/20">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                Logout
+            <a href="/logout" class="flex items-center justify-center gap-2 w-full bg-white hover:bg-red-50 hover:text-red-600 text-slate-600 py-2.5 rounded-lg text-sm font-medium transition-all border border-slate-200 hover:border-red-200 shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg> Logout
             </a>
         </div>
     </aside>
 
-    <main class="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-8">
+    <main class="flex-1 overflow-y-auto p-4 md:p-8">
         
-        {% set highest_exp = expenses | map(attribute='amount') | max if expenses else 0 %}
-        {% set recent_exp = expenses[0] if expenses else None %}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-16 h-16 bg-green-50 rounded-bl-full transition-transform group-hover:scale-110"></div>
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Monthly Income</h2>
+                <p class="text-3xl font-extrabold text-slate-900">₹{{ "%.2f"|format(income) }}</p>
+                <form action="/set_income" method="POST" class="mt-4 flex gap-2">
+                    <input type="number" step="0.01" name="amount" placeholder="Update Income" required class="w-full text-sm p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none text-slate-900">
+                    <button type="submit" class="bg-green-100 text-green-700 border border-green-200 px-3 py-2 rounded-lg text-sm hover:bg-green-600 hover:text-white transition font-semibold">Set</button>
+                </form>
+            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl"></div>
-                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Total Spent</h2>
-                <p class="text-4xl font-bold text-white">₹{{ "%.2f"|format(total_spent) }}</p>
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden group">
+                <div class="absolute right-0 top-0 w-16 h-16 bg-indigo-50 rounded-bl-full transition-transform group-hover:scale-110"></div>
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Target Budget</h2>
+                <p class="text-3xl font-extrabold text-slate-900">₹{{ "%.2f"|format(budget_amount) }}</p>
+                <form action="/set_budget" method="POST" class="mt-4 flex gap-2">
+                    <input type="number" step="0.01" name="amount" placeholder="Update Budget" required class="w-full text-sm p-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900">
+                    <button type="submit" class="bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-2 rounded-lg text-sm hover:bg-indigo-600 hover:text-white transition font-semibold">Set</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Total Spent</h2>
+                <p class="text-3xl font-extrabold text-slate-900">₹{{ "%.2f"|format(total_spent) }}</p>
                 {% if budget_amount > 0 %}
-                <p class="text-xs text-slate-500 mt-2">Out of ₹{{ "%.2f"|format(budget_amount) }} budget</p>
+                    {% if remaining_budget < 0 %}<p class="text-xs text-red-600 mt-2 font-bold">Over budget by ₹{{ "%.2f"|format(remaining_budget|abs) }}!</p>
+                    {% else %}<p class="text-xs text-indigo-600 mt-2 font-bold">₹{{ "%.2f"|format(remaining_budget) }} remaining</p>{% endif %}
+                {% else %}<p class="text-xs text-slate-500 mt-2">Set a budget to track limits</p>{% endif %}
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Net Balance</h2>
+                {% if balance < 0 %}
+                    <p class="text-3xl font-extrabold text-red-600">-₹{{ "%.2f"|format(balance|abs) }}</p>
+                    <p class="text-xs text-red-600 mt-2 font-bold">Spending exceeds income!</p>
+                {% else %}
+                    <p class="text-3xl font-extrabold text-emerald-600">₹{{ "%.2f"|format(balance) }}</p>
+                    <p class="text-xs text-emerald-600 mt-2 font-bold">Available cash</p>
                 {% endif %}
             </div>
-
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Transactions</h2>
-                <p class="text-4xl font-bold text-white">{{ expense_count }}</p>
-                <p class="text-xs text-slate-500 mt-2">Recorded this month</p>
-            </div>
-
-            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Highest Exp.</h2>
-                <p class="text-4xl font-bold text-white">₹{{ "%.2f"|format(highest_exp) }}</p>
-                <p class="text-xs text-slate-500 mt-2">Maximum single transaction</p>
-            </div>
         </div>
-
-        {% if expenses %}
-        <div class="flex flex-wrap gap-4 mb-8">
-            <div class="px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-lg flex items-center gap-2">
-                <span class="text-lg">🔥</span>
-                <p class="text-sm text-slate-300">Top Category: <span id="top-category-label" class="font-bold text-indigo-400">Calculating...</span></p>
-            </div>
-            <div class="px-4 py-2 bg-slate-800/50 border border-slate-700 rounded-lg flex items-center gap-2">
-                <span class="text-lg">⚡</span>
-                <p class="text-sm text-slate-300">Recent: <span class="font-bold text-white">₹{{ "%.0f"|format(recent_exp.amount) }}</span> ({{ recent_exp.description }})</p>
-            </div>
-        </div>
-        {% endif %}
 
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
-            
             <div class="space-y-8 xl:col-span-1">
-                
-                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                    <h2 class="text-lg font-bold mb-5 text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                        New Transaction
-                    </h2>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h2 class="text-lg font-bold mb-5 text-slate-900 flex items-center gap-2">New Transaction</h2>
                     <form action="/create" method="POST" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Amount (₹)</label>
-                            <input type="number" step="0.01" name="amount" required class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white outline-none transition-all placeholder-slate-600" placeholder="0.00">
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Amount (₹)</label>
+                            <input type="number" step="0.01" name="amount" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-slate-900 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Category</label>
-                            <select name="category" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white outline-none transition-all appearance-none">
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Category</label>
+                            <select name="category" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-slate-900 outline-none">
                                 <option value="Food">Food & Dining</option>
                                 <option value="Travel">Travel & Transport</option>
                                 <option value="Housing">Housing & Rent</option>
@@ -120,67 +98,51 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Description</label>
-                            <input type="text" name="description" required placeholder="What was this for?" class="w-full p-2.5 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 text-white outline-none transition-all placeholder-slate-600">
+                            <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Description</label>
+                            <input type="text" name="description" required class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-slate-900 outline-none">
                         </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg hover:from-indigo-500 hover:to-purple-500 font-semibold shadow-lg shadow-indigo-500/20 transition-all mt-2">
-                            Record Expense
-                        </button>
+                        <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 font-bold shadow-md transition-all">Record Expense</button>
                     </form>
                 </div>
 
-                <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-                    <h2 class="text-lg font-bold mb-4 text-white">Analytics</h2>
-                    <div class="relative h-64 w-full flex justify-center items-center">
-                        <canvas id="expenseChart"></canvas>
-                    </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h2 class="text-lg font-bold mb-4 text-slate-900">Analytics</h2>
+                    <div class="relative h-64 w-full flex justify-center items-center"><canvas id="expenseChart"></canvas></div>
                 </div>
             </div>
 
             <div class="xl:col-span-2">
-                <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl overflow-hidden flex flex-col h-full">
-                    <div class="px-6 py-5 border-b border-slate-800 flex justify-between items-center bg-slate-900">
-                        <h2 class="text-lg font-bold text-white">Recent Activity</h2>
+                <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full">
+                    <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h2 class="text-lg font-bold text-slate-900">Recent Activity</h2>
+                        <a href="/export" class="text-sm bg-indigo-50 text-indigo-700 border border-indigo-200 px-4 py-2 rounded-lg hover:bg-indigo-600 hover:text-white transition font-bold flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Download Report
+                        </a>
                     </div>
                     
                     {% if expenses %}
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider border-b border-slate-800">
-                                    <th class="p-4 font-medium">Date</th>
-                                    <th class="p-4 font-medium">Details</th>
-                                    <th class="p-4 font-medium">Category</th>
-                                    <th class="p-4 font-medium text-right">Amount</th>
-                                    <th class="p-4 font-medium text-center">Action</th>
+                                <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                                    <th class="p-4 font-bold">Date</th>
+                                    <th class="p-4 font-bold">Details</th>
+                                    <th class="p-4 font-bold">Category</th>
+                                    <th class="p-4 font-bold text-right">Amount</th>
+                                    <th class="p-4 font-bold text-center">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800/50">
-                                {% set color_map = {
-                                    'Food': 'bg-green-500/10 text-green-400 border-green-500/20',
-                                    'Travel': 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-                                    'Housing': 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-                                    'Entertainment': 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-                                    'Bills': 'bg-red-500/10 text-red-400 border-red-500/20',
-                                    'Shopping': 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-                                    'Other': 'bg-slate-500/10 text-slate-400 border-slate-500/20'
-                                } %}
-
+                            <tbody class="divide-y divide-slate-100">
+                                {% set color_map = {'Food': 'bg-green-100 text-green-700', 'Travel': 'bg-blue-100 text-blue-700', 'Housing': 'bg-purple-100 text-purple-700', 'Entertainment': 'bg-yellow-100 text-yellow-700', 'Bills': 'bg-red-100 text-red-700', 'Shopping': 'bg-pink-100 text-pink-700', 'Other': 'bg-slate-100 text-slate-700'} %}
                                 {% for expense in expenses %}
-                                <tr class="hover:bg-slate-800/30 transition-colors group">
-                                    <td class="p-4 text-sm text-slate-400">{{ expense.date.strftime('%d %b, %Y') }}</td>
-                                    <td class="p-4 text-sm font-medium text-slate-200">{{ expense.description }}</td>
-                                    <td class="p-4 text-sm">
-                                        {% set badge_style = color_map.get(expense.category, color_map['Other']) %}
-                                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold border {{ badge_style }}">
-                                            {{ expense.category }}
-                                        </span>
-                                    </td>
-                                    <td class="p-4 text-sm font-bold text-right text-slate-200">₹{{ "%.2f"|format(expense.amount) }}</td>
-                                    <td class="p-4 text-center">
-                                        <a href="/delete/{{ expense.id }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100" title="Delete Expense">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                        </a>
+                                <tr class="hover:bg-slate-50 transition-colors group">
+                                    <td class="p-4 text-sm text-slate-500">{{ expense.date.strftime('%d %b, %Y') }}</td>
+                                    <td class="p-4 text-sm font-bold text-slate-900">{{ expense.description }}</td>
+                                    <td class="p-4 text-sm"><span class="px-2.5 py-1 rounded-md text-xs font-bold {{ color_map.get(expense.category, color_map['Other']) }}">{{ expense.category }}</span></td>
+                                    <td class="p-4 text-sm font-extrabold text-right text-slate-900">₹{{ "%.2f"|format(expense.amount) }}</td>
+                                    <td class="p-4 text-center space-x-2">
+                                        <a href="/update/{{ expense.id }}" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold opacity-0 group-hover:opacity-100 transition">Edit</a>
+                                        <a href="/delete/{{ expense.id }}" class="text-red-500 hover:text-red-700 text-xs font-bold opacity-0 group-hover:opacity-100 transition">Delete</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -189,11 +151,8 @@
                     </div>
                     {% else %}
                     <div class="flex-1 flex flex-col items-center justify-center p-12 text-center">
-                        <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center text-4xl mb-4 shadow-inner">
-                            💰
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-200 mb-2">No expenses yet</h3>
-                        <p class="text-slate-500 max-w-sm">Add your first transaction using the form to start tracking your spending and unlock insights.</p>
+                        <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-4xl mb-4">💰</div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">No expenses yet</h3>
                     </div>
                     {% endif %}
                 </div>
@@ -202,112 +161,31 @@
     </main>
 
     <script>
-        const rawExpenses = [
-            {% for exp in expenses %}
-            { category: "{{ exp.category }}", amount: {{ exp.amount }} },
-            {% endfor %}
-        ];
-
+        const rawExpenses = [ {% for exp in expenses %} { category: "{{ exp.category }}", amount: {{ exp.amount }} }, {% endfor %} ];
         if (rawExpenses.length > 0) {
-            // Aggregate Data
             const categoryTotals = {};
-            rawExpenses.forEach(exp => {
-                categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
-            });
-
-            // Find "Most Spent" Category dynamically
-            let maxCategory = '';
-            let maxAmount = 0;
-            for (const [cat, amt] of Object.entries(categoryTotals)) {
-                if (amt > maxAmount) {
-                    maxAmount = amt;
-                    maxCategory = cat;
-                }
-            }
-            const topLabelEl = document.getElementById('top-category-label');
-            if(topLabelEl) topLabelEl.innerText = maxCategory;
-
-            // Custom Chart.js Plugin for Center Text
+            rawExpenses.forEach(exp => { categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount; });
             const centerTextPlugin = {
                 id: 'centerText',
                 beforeDraw: function(chart) {
                     if (chart.config.options.elements.center) {
                         const ctx = chart.ctx;
-                        const centerConfig = chart.config.options.elements.center;
                         ctx.save();
-                        
-                        // Main total text
-                        ctx.font = "bold 20px sans-serif";
-                        ctx.fillStyle = "#f8fafc";
-                        ctx.textAlign = "center";
-                        ctx.textBaseline = "middle";
-                        const text = centerConfig.text;
+                        ctx.font = "bold 20px sans-serif"; ctx.fillStyle = "#0f172a"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
                         const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
                         const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-                        ctx.fillText(text, centerX, centerY + 5);
-
-                        // Subtext
-                        ctx.font = "12px sans-serif";
-                        ctx.fillStyle = "#64748b";
-                        ctx.fillText("Total Spent", centerX, centerY - 15);
-                        
+                        ctx.fillText(chart.config.options.elements.center.text, centerX, centerY + 5);
+                        ctx.font = "bold 12px sans-serif"; ctx.fillStyle = "#64748b"; ctx.fillText("Total Spent", centerX, centerY - 15);
                         ctx.restore();
                     }
                 }
             };
             Chart.register(centerTextPlugin);
-
-            // Initialize Chart
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-            new Chart(ctx, {
+            new Chart(document.getElementById('expenseChart').getContext('2d'), {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(categoryTotals),
-                    datasets: [{
-                        data: Object.values(categoryTotals),
-                        backgroundColor: [
-                            '#22c55e', // green (Food)
-                            '#3b82f6', // blue (Travel)
-                            '#a855f7', // purple (Housing)
-                            '#eab308', // yellow (Entertainment)
-                            '#ef4444', // red (Bills)
-                            '#ec4899', // pink (Shopping)
-                            '#64748b'  // slate (Other)
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#0b1120', // Matches slate-950 background
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '75%',
-                    elements: {
-                        center: { text: '₹{{ "%.0f"|format(total_spent) }}' }
-                    },
-                    plugins: {
-                        legend: { 
-                            position: 'bottom',
-                            labels: { color: '#cbd5e1', padding: 20, usePointStyle: true, pointStyle: 'circle' }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` ₹${context.parsed}`;
-                                }
-                            }
-                        }
-                    }
-                }
+                data: { labels: Object.keys(categoryTotals), datasets: [{ data: Object.values(categoryTotals), backgroundColor: ['#22c55e', '#3b82f6', '#a855f7', '#eab308', '#ef4444', '#ec4899', '#64748b'], borderWidth: 2, borderColor: '#ffffff', hoverOffset: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', elements: { center: { text: '₹{{ "%.0f"|format(total_spent) }}' } }, plugins: { legend: { position: 'bottom', labels: { color: '#475569', padding: 20, usePointStyle: true, pointStyle: 'circle' } } } }
             });
-        } else {
-            // Empty Chart State
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-            ctx.font = '14px sans-serif';
-            ctx.fillStyle = '#475569'; // slate-600
-            ctx.textAlign = 'center';
-            ctx.fillText('No data available.', 150, 120);
         }
     </script>
 </body>

@@ -8,7 +8,8 @@ import jwt
 import bcrypt
 from datetime import datetime, timedelta, timezone
 import os
-from typing import Optional
+import csv
+from io import StringIO
 
 # ==========================================
 # 1. SECURITY & JWT CONFIGURATION
@@ -30,9 +31,9 @@ def create_access_token(data: dict):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # ==========================================
-# 2. DATABASE SETUP (Added Budget Model)
+# 2. DATABASE SETUP
 # ==========================================
-engine = create_engine("sqlite:///finance_app_v2.db", connect_args={"check_same_thread": False})
+engine = create_engine("sqlite:///finance_app_final.db", connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 class Base(DeclarativeBase):
@@ -54,11 +55,12 @@ class Expense(Base):
     description: Mapped[str] = mapped_column(String(200))
     date: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-class Budget(Base):
-    __tablename__ = "budgets"
+class FinanceProfile(Base):
+    __tablename__ = "finance_profiles"
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True) # One budget per user for now
-    amount: Mapped[float] = mapped_column(Float)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
+    monthly_income: Mapped[float] = mapped_column(Float, default=0.0)
+    monthly_budget: Mapped[float] = mapped_column(Float, default=0.0)
 
 Base.metadata.create_all(bind=engine)
 
@@ -97,14 +99,12 @@ def signup_page(request: Request):
 
 @app.post("/signup")
 def signup_post(request: Request, name: str = Form(...), email: str = Form(...), password: str = Form(...), db: Session = Depends(get_db)):
-    existing_user = db.scalars(select(User).where(User.email == email)).first()
-    if existing_user:
+    if db.scalars(select(User).where(User.email == email)).first():
         return templates.TemplateResponse(request=request, name="signup.html", context={"error": "Email already registered."})
-    
     new_user = User(name=name, email=email, hashed_password=get_password_hash(password))
     db.add(new_user)
     db.commit()
-    db.refresh(new_user) # Added refresh
+    db.refresh(new_user)
     
     access_token = create_access_token(data={"sub": new_user.email})
     response = RedirectResponse(url="/", status_code=303)
@@ -133,53 +133,47 @@ def logout():
     return response
 
 # ==========================================
-# 5. PROTECTED APP ROUTES (Dashboard & CRUD)
+# 5. DASHBOARD & FINANCE ROUTES
 # ==========================================
 @app.get("/", response_class=HTMLResponse)
 def home_page(request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)
         
     expenses = db.scalars(select(Expense).where(Expense.user_id == current_user.id).order_by(Expense.date.desc())).all()
-    user_budget = db.scalars(select(Budget).where(Budget.user_id == current_user.id)).first()
+    profile = db.scalars(select(FinanceProfile).where(FinanceProfile.user_id == current_user.id)).first()
     
     total_spent = sum(exp.amount for exp in expenses)
-    expense_count = len(expenses)
-    budget_amount = user_budget.amount if user_budget else 0.0
-    remaining_budget = budget_amount - total_spent
+    income = profile.monthly_income if profile else 0.0
+    budget_amount = profile.monthly_budget if profile else 0.0
     
-    return templates.TemplateResponse(
-        request=request, 
-        name="index.html", 
-        context={
-            "expenses": expenses, 
-            "current_user": current_user, 
-            "total_spent": total_spent,
-            "expense_count": expense_count,
-            "budget_amount": budget_amount,
-            "remaining_budget": remaining_budget
-        }
-    )
+    return templates.TemplateResponse(request=request, name="index.html", context={
+        "expenses": expenses, "current_user": current_user, "total_spent": total_spent,
+        "expense_count": len(expenses), "income": income, "budget_amount": budget_amount,
+        "balance": income - total_spent, "remaining_budget": budget_amount - total_spent
+    })
+
+@app.post("/set_income")
+def set_income(amount: float = Form(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if not current_user: return RedirectResponse(url="/login", status_code=303)
+    profile = db.scalars(select(FinanceProfile).where(FinanceProfile.user_id == current_user.id)).first()
+    if profile: profile.monthly_income = amount
+    else: db.add(FinanceProfile(user_id=current_user.id, monthly_income=amount, monthly_budget=0.0))
+    db.commit()
+    return RedirectResponse(url="/", status_code=303)
 
 @app.post("/set_budget")
 def set_budget(amount: float = Form(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)
-    
-    user_budget = db.scalars(select(Budget).where(Budget.user_id == current_user.id)).first()
-    if user_budget:
-        user_budget.amount = amount
-    else:
-        new_budget = Budget(user_id=current_user.id, amount=amount)
-        db.add(new_budget)
-        
+    profile = db.scalars(select(FinanceProfile).where(FinanceProfile.user_id == current_user.id)).first()
+    if profile: profile.monthly_budget = amount
+    else: db.add(FinanceProfile(user_id=current_user.id, monthly_income=0.0, monthly_budget=amount))
     db.commit()
     return RedirectResponse(url="/", status_code=303)
 
 @app.post("/create")
 def create_expense(amount: float = Form(...), category: str = Form(...), description: str = Form(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)
-    
-    new_expense = Expense(user_id=current_user.id, amount=amount, category=category, description=description)
-    db.add(new_expense)
+    db.add(Expense(user_id=current_user.id, amount=amount, category=category, description=description))
     db.commit()
     return RedirectResponse(url="/", status_code=303)
 
@@ -187,29 +181,44 @@ def create_expense(amount: float = Form(...), category: str = Form(...), descrip
 def update_page(request: Request, expense_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)
     expense = db.get(Expense, expense_id)
-    if not expense or expense.user_id != current_user.id:
-        return RedirectResponse(url="/", status_code=303)
-        
+    if not expense or expense.user_id != current_user.id: return RedirectResponse(url="/", status_code=303)
     return templates.TemplateResponse(request=request, name="update.html", context={"expense": expense})
 
 @app.post("/update/{expense_id}")
 def update_expense(expense_id: int, amount: float = Form(...), category: str = Form(...), description: str = Form(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)
-    
     expense = db.get(Expense, expense_id)
     if expense and expense.user_id == current_user.id:
-        expense.amount = amount
-        expense.category = category
-        expense.description = description
+        expense.amount = amount; expense.category = category; expense.description = description
         db.commit()
     return RedirectResponse(url="/", status_code=303)
 
 @app.get("/delete/{expense_id}")
 def delete_expense(expense_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)
-    
     expense = db.get(Expense, expense_id)
     if expense and expense.user_id == current_user.id: 
         db.delete(expense)
         db.commit()
     return RedirectResponse(url="/", status_code=303)
+
+# ==========================================
+# 6. REPORT GENERATION ROUTE
+# ==========================================
+@app.get("/export")
+def export_report(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Generates a downloadable CSV report of all user expenses."""
+    if not current_user: return RedirectResponse(url="/login", status_code=303)
+    
+    expenses = db.scalars(select(Expense).where(Expense.user_id == current_user.id).order_by(Expense.date.desc())).all()
+    
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Date", "Description", "Category", "Amount (INR)"])
+    
+    for exp in expenses:
+        writer.writerow([exp.date.strftime('%Y-%m-%d'), exp.description, exp.category, f"{exp.amount:.2f}"])
+        
+    response = Response(content=output.getvalue(), media_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=finance_report.csv"
+    return response
