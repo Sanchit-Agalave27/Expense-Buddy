@@ -152,6 +152,17 @@ def home_page(request: Request, current_user: User = Depends(get_current_user), 
         "balance": income - total_spent, "remaining_budget": budget_amount - total_spent
     })
 
+@app.get("/analytics", response_class=HTMLResponse)
+def analytics_page(request: Request, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if not current_user: return RedirectResponse(url="/login", status_code=303)
+        
+    expenses = db.scalars(select(Expense).where(Expense.user_id == current_user.id).order_by(Expense.date.desc())).all()
+    total_spent = sum(exp.amount for exp in expenses)
+    
+    return templates.TemplateResponse(request=request, name="analytics.html", context={
+        "expenses": expenses, "current_user": current_user, "total_spent": total_spent
+    })
+
 @app.post("/set_income")
 def set_income(amount: float = Form(...), db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     if not current_user: return RedirectResponse(url="/login", status_code=303)

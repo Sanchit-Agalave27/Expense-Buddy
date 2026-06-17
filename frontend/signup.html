@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up | FinanceTracker</title>
+    <title>Sign Up | Expense Buddy</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 font-sans flex items-center justify-center min-h-screen p-4">
@@ -16,9 +16,7 @@
         </div>
 
         {% if error %}
-        <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 text-sm text-center font-bold shadow-sm">
-            {{ error }}
-        </div>
+        <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 text-sm text-center font-bold shadow-sm">{{ error }}</div>
         {% endif %}
 
         <form action="/signup" method="POST" class="space-y-4 relative z-10">
@@ -34,14 +32,9 @@
                 <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase tracking-wide">Password</label>
                 <input type="password" name="password" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 text-slate-900 outline-none transition-all placeholder-slate-400" placeholder="••••••••">
             </div>
-            <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 font-bold shadow-md transition-all mt-4">
-                Create Account
-            </button>
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 font-bold shadow-md transition-all mt-4">Create Account</button>
         </form>
-
-        <p class="mt-6 text-center text-sm text-slate-500 font-medium relative z-10">
-            Already have an account? <a href="/login" class="text-indigo-600 hover:text-indigo-800 font-bold transition-colors">Sign in</a>
-        </p>
+        <p class="mt-6 text-center text-sm text-slate-500 font-medium relative z-10">Already have an account? <a href="/login" class="text-indigo-600 hover:text-indigo-800 font-bold transition-colors">Sign in</a></p>
     </div>
 </body>
 </html>
