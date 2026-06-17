@@ -70,7 +70,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 os.makedirs("static", exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="Frontend") 
+templates = Jinja2Templates(directory="frontend") 
 
 def get_db():
     db = SessionLocal()
