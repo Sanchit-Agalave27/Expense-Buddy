@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FinanceTracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-50 font-sans flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md p-8 bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/20 rounded-full blur-3xl"></div>
+        
+        <div class="text-center mb-8 relative z-10">
+            <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 tracking-tight">FinanceTracker</h1>
+            <p class="text-slate-400 mt-2 text-sm">Welcome back! Please enter your details.</p>
+        </div>
+
+        {% if error %}
+        <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm text-center font-medium">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/login" method="POST" class="space-y-5 relative z-10">
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Email</label>
+                <input type="email" name="email" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white outline-none transition-all placeholder-slate-600" placeholder="you@example.com">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide">Password</label>
+                <input type="password" name="password" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white outline-none transition-all placeholder-slate-600" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-lg hover:from-indigo-500 hover:to-purple-500 font-bold shadow-lg shadow-indigo-500/20 transition-all mt-4">
+                Sign In
+            </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-slate-400 relative z-10">
+            Don't have an account? <a href="/signup" class="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors">Sign up</a>
+        </p>
+    </div>
+</body>
+</html>
