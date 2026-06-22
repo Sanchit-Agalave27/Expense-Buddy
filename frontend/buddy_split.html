@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buddy Split | Expense Buddy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-white border-r border-slate-200 flex-col hidden md:flex shadow-sm z-10">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 tracking-tight">Expense Buddy</h1>
+        </div>
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <a href="/" class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" stroke-width="2" stroke-linecap="round"></path></svg> Dashboard
+            </a>
+            <a href="/buddy-split" class="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-xl font-medium transition-all">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Buddy Split
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-4 md:p-8">
+        <div class="max-w-4xl mx-auto">
+            
+            <div class="mb-8">
+                <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Split with buddy</h1>
+                <p class="text-slate-500 mt-2">Create groups, invite your buddies, and settle debts easily.</p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8">
+                <form action="/group/create" method="POST" class="flex flex-col sm:flex-row gap-4 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs font-bold text-slate-500 mb-1.5 uppercase">Name Group</label>
+                        <input type="text" name="name" placeholder="e.g., Goa Trip, Apartment Rent" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button type="submit" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-lg font-bold shadow-md hover:from-indigo-700 hover:to-purple-700 transition-all">
+                        Save
+                    </button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Your Groups</h3>
+                    <div class="space-y-4">
+                        {% for group in accepted_groups %}
+                            <a href="/group/{{ group.id }}" class="block bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:border-indigo-300 hover:shadow-md transition-all group-card">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold">
+                                        {{ group.name[0]|upper }}
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-bold text-slate-900">{{ group.name }}</h3>
+                                        <p class="text-sm text-slate-500">Tap to view ledger & chat</p>
+                                    </div>
+                                </div>
+                            </a>
+                        {% else %}
+                            <p class="text-slate-500 text-sm">You have no active groups.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">Pending Invitations</h3>
+                    <div class="space-y-4">
+                        {% for group in pending_groups %}
+                            <div class="bg-amber-50 p-5 rounded-2xl border border-amber-100 shadow-sm flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-bold text-amber-900">{{ group.name }}</h3>
+                                    <p class="text-xs text-amber-700">Invited to join</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <form action="/group/{{ group.id }}/reject" method="POST">
+                                        <button type="submit" class="px-3 py-1.5 text-xs font-bold text-red-600 bg-red-100 rounded-md hover:bg-red-200">Decline</button>
+                                    </form>
+                                    <form action="/group/{{ group.id }}/accept" method="POST">
+                                        <button type="submit" class="px-3 py-1.5 text-xs font-bold text-green-700 bg-green-200 rounded-md hover:bg-green-300">Accept</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-slate-500 text-sm">No pending invites.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>
